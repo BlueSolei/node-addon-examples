@@ -22,13 +22,12 @@ auto JSType = [](auto method) {
 };
 
 auto JS = [](const char *identifierName, auto identifier) {
-  return std::make_tuple(
-      identifierName, [=](Napi::Env &env) { return JSType(identifier)(env); });
+  return std::make_tuple(identifierName, JSType(identifier));
 };
 
 struct Export {
-  Napi::Env& env;
-  Napi::Object& exports;
+  Napi::Env &env;
+  Napi::Object &exports;
 
   template <class Metadata> Export &operator()(Metadata &&metadata) {
     exports.Set(Napi::String::New(env, std::get<0>(metadata)),
@@ -36,7 +35,7 @@ struct Export {
     return *this;
   }
 
-  operator Napi::Object&() const { return exports; }
+  operator Napi::Object &() const { return exports; }
 };
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
