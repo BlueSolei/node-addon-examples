@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.1)
 # Name of the project (will be the name of the plugin)
 project(hello)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 # Build a shared library named after the project from the files in `src/`
 file(GLOB SOURCE_FILES "*.cc" "*.h")
