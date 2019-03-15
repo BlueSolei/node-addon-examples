@@ -21,22 +21,24 @@ auto JSType = [](auto method) {
     return [=](Napi::Env &env) { return Napi::Function::New(env, Wrap(method)); };
 };
 
-auto JS = [](const char *identifierName, auto identifier) {
-    return std::make_tuple(identifierName, JSType(identifier));
-};
-
-struct Export
+class Module
 {
-    Napi::Env &env;
-    Napi::Object &exports;
+  public:
+    Module(Napi::Env &env,
+           Napi::Object &exports) : m_env(env), m_exports(exports) {}
 
-    template <class Metadata>
-    Export &operator()(Metadata &&metadata)
+    template <class Identifier>
+    Module &Register(const char *identifierName, Identifier &&identifier)
     {
-        exports.Set(Napi::String::New(env, std::get<0>(metadata)),
-                    std::get<1>(metadata)(env));
+        auto jsTypeFactory = JSType(std::forward<Identifier>(identifier));
+        m_exports.Set(Napi::String::New(m_env, identifierName),
+                      jsTypeFactory(m_env));
         return *this;
     }
 
-    operator Napi::Object &() const { return exports; }
+    operator Napi::Object &() { return m_exports; }
+
+  private:
+    Napi::Env &m_env;
+    Napi::Object &m_exports;
 };

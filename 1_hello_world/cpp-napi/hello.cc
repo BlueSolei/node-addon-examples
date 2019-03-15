@@ -1,5 +1,4 @@
 #include <napi.h>
-#include <tuple>
 
 #include "hello.h"
 
@@ -10,7 +9,7 @@ std::string Hello() { return "hello"; }
 
 Napi::Object Init(Napi::Env env, Napi::Object exports)
 {
-  return Export{env, exports}(JS("hello", Hello))(JS("world", World));
+  return Module(env, exports).Register("hello", Hello).Register("world", World);
 }
 
 NODE_API_MODULE(hello, Init)
