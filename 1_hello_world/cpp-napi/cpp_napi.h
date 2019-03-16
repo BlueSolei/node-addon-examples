@@ -4,6 +4,15 @@
 #include <napi.h>
 #include <string>
 
+using Method = Napi::String (*)(const Napi::CallbackInfo &info);
+template <class T>
+struct JSStruct;
+
+template <>
+struct JSStruct<Method>
+{
+};
+
 auto Wrap(const std::string &str)
 {
     return [&](Napi::Env &env) { return Napi::String::New(env, str); };
@@ -33,6 +42,19 @@ class Module
         auto jsTypeFactory = JSType(std::forward<Identifier>(identifier));
         m_exports.Set(Napi::String::New(m_env, identifierName),
                       jsTypeFactory(m_env));
+        return *this;
+    }
+
+    template <class R, R (*Identifier)()>
+    Module &Register(const char *identifierName)
+    {
+        auto jsTypeFactory = JSType(Identifier);
+        m_exports.Set(Napi::String::New(m_env, identifierName),
+                      jsTypeFactory(m_env));
+
+        // auto jsTypeFactory = JSType<Identifier>();
+        // m_exports.Set(Napi::String::New(m_env, identifierName),
+        //               jsTypeFactory(m_env));
         return *this;
     }
 
