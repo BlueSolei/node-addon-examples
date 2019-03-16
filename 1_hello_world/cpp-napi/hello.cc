@@ -9,18 +9,16 @@ std::string Hello() { return "hello"; }
 
 double AddNative(double a, double b) { return a + b; }
 
-Napi::Value Add(const Napi::CallbackInfo &info)
-{
+Napi::Value Add(const Napi::CallbackInfo &info) {
   Napi::Env env = info.Env();
 
-  if (info.Length() < 2)
-  {
-    Napi::TypeError::New(env, "Wrong number of arguments").ThrowAsJavaScriptException();
+  if (info.Length() < 2) {
+    Napi::TypeError::New(env, "Wrong number of arguments")
+        .ThrowAsJavaScriptException();
     return env.Null();
   }
 
-  if (!info[0].IsNumber() || !info[1].IsNumber())
-  {
+  if (!info[0].IsNumber() || !info[1].IsNumber()) {
     Napi::TypeError::New(env, "Wrong arguments").ThrowAsJavaScriptException();
     return env.Null();
   }
@@ -32,11 +30,10 @@ Napi::Value Add(const Napi::CallbackInfo &info)
   return num;
 }
 
-Napi::Object Init(Napi::Env env, Napi::Object exports)
-{
-  auto module = Module(env, exports).Register("hello", Hello).Register("world", World);
-  exports.Set(Napi::String::New(env, "add"),
-              Napi::Function::New(env, Add));
+Napi::Object Init(Napi::Env env, Napi::Object exports) {
+  auto module =
+      Module(env, exports).Register("hello", Hello).Register("world", World);
+  exports.Set(Napi::String::New(env, "add"), Napi::Function::New(env, Add));
   return module;
 }
 
