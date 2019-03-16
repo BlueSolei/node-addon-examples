@@ -1,0 +1,1 @@
+cmake-js compile && node .
